@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PayPal Payment Buttons</title>
+    <style>
+        a {
+            text-decoration: none;
+            color: black;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* مسافة بين المنتجات */
+            padding: 10px;
+            background-color: #f5f5f5;
+            width: 98%;
+            margin-left: 1%;
+        }
+        .product {
+            width: 280px;
+            height: 600;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px;
+            text-align: center;
+        }
+        .product div img {
+            height: 230px;
+            width: 200px;
+        }
+        .product .product_info {
+            text-align: left;
+            padding-top: 20px;
+        }
+        .view {
+            text-decoration: none;
+            color: black;
+            background: gold;
+            padding: 10px 125px;
+        }
+    </style>
+</head>
+<body>
+    <div id="products" class="products">
+        <div class="row" id="row">
+
+        </div>
+    </div>
+
+    <div id="paypal-button-container"></div>
+    <script src="https://www.paypal.com/sdk/js?client-id=AZh2RKPBm4QeGdTJXrNHZj0w4m0K2d0LTzAi8uh1w3O4jf4r4O4Bw7LHebAf6R6fqHiUJyaqmyz0L-tB"></script>
+    <script>
+        // Get elemnts
+        let products_container = document.getElementById("products")
+        let found_row = document.getElementById("row")
+        // Get product api
+        let request = new XMLHttpRequest()
+        request.open("GET", "https://fakestoreapi.com/products")
+        request.responseType = "json"
+        request.send()
+        request.onload = () => {
+            // This is the product response
+            let products = request.response
+            for(product of products){
+                console.log(product.title.length)
+                let del_price = String(Number(product.price) + 100)
+                found_row.innerHTML += `
+<div id="product" class="product">
+    <a href="paypal_btns.html?id=${product.id}">
+    <div id="product-img" class="product_img">
+        <img src="${product.image}" id="img" alt="" width="200">
+    </div>
+    <div id="product-info" class="product_info">
+        <h2 id="title" class="title">${product.title}</h2>
+        <p id="price" class="price">price: ${product.price} <del id="del_price" class="del_price">${del_price}</del></p>
+        <p id="category" class="category">category: ${product.category}</p>
+        <!-- <a href="#" class="view">View</a> -->
+    </div>
+    </a>
+</div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

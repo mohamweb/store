@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PayPal Payment Buttons</title>
+</head>
+<body>
+    <div id="product">
+        <div id="product-img">
+            <img src="" id="img" alt="" width="400">
+        </div>
+        <div id="product-info">
+            <h2 id="title"></h2>
+            <p id="content"></p>
+            <p id="price">price: </p><del id="del_price"></del>
+            <p id="category"></p>
+            <p id="rating"><p id="num_rate"></p></p>
+        </div>
+    </div>
+    <div id="paypal-button-container"></div>
+    <script src="https://www.paypal.com/sdk/js?client-id=AZh2RKPBm4QeGdTJXrNHZj0w4m0K2d0LTzAi8uh1w3O4jf4r4O4Bw7LHebAf6R6fqHiUJyaqmyz0L-tB"></script>
+    <script>
+        // Get elemnts
+        let img = document.getElementById("img")
+        let title = document.getElementById("title")
+        let content = document.getElementById("content")
+        let price = document.getElementById("price")
+        let del_price = document.getElementById("del_price")
+        let category = document.getElementById("category")
+        let rating = document.getElementById("rating")
+        let num_rate = document.getElementById("num_rate")
+        let params = window.location.search;
+        let part = params.slice(4, 10)
+        console.log(part)
+
+        // Get product api
+        let request = new XMLHttpRequest()
+        request.open("GET", `https://fakestoreapi.com/products/${part}`)
+        request.responseType = "json"
+        request.send()
+        request.onload = () => {
+            // This is the product response
+            let product = request.response
+            // Extange the json to elements
+            img.src = product.image
+            title.innerHTML = product.title
+            content.innerHTML = product.description
+            price.innerHTML += product.price
+            del_price.innerHTML = String(Number(product.price) + 100)
+            category.innerHTML = product.category
+            rating.innerHTML = product.rating.rate
+            num_rate.innerHTML = product.rating.count
+            let total = product.price
+            // Paypal Buttons
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: total // Replace with the actual amount
+                            }
+                        }]
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+    </script>
+</body>
+</html>
